@@ -12,7 +12,7 @@ function App() {
       user,
       amount
     });
-    alert(res.data.message);
+    alert("Balance: " + res.data.balance);
   };
 
   const withdraw = async () => {
