@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API = "https://zonguru-app.onrender.com"; // <-- မင်း link နဲ့ပြောင်း
+const API = "https://zonguru-jack-api.onrender.com"; // <-- မင်း link နဲ့ပြောင်း
 
 function App() {
   const [user, setUser] = useState("");
