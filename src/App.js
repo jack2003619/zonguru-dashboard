@@ -8,20 +8,26 @@ function App() {
   const [amount, setAmount] = useState("");
 
   const deposit = async () => {
-    const res = await axios.post(`${API}/deposit`, {
-      user,
-      amount
-    });
-    alert("Balance: " + res.data.balance);
-  };
+  const res = await axios.post(`${API}/deposit`, {
+    user,
+    amount
+  });
+
+  alert("Deposit Success | Balance: " + res.data.balance);
+};
 
   const withdraw = async () => {
-    const res = await axios.post(`${API}/withdraw`, {
-      user,
-      amount
-    });
-    alert("Balance: " + res.data.balance);
-  };
+  const res = await axios.post(`${API}/withdraw`, {
+    user,
+    amount
+  });
+
+  if (res.data.success) {
+    alert("Withdraw Success | Balance: " + res.data.balance);
+  } else {
+    alert(res.data.message);
+  }
+};
 
   return (
     <div style={{ padding: 20 }}>
