@@ -13,6 +13,8 @@ export default function App() {
     alert("Register clicked");
 
     try {
+      alert("Sending request...");
+
       const res = await fetch(API + "/register", {
         method: "POST",
         headers: {
@@ -27,7 +29,7 @@ export default function App() {
       alert(data.message || JSON.stringify(data));
 
     } catch (err) {
-      alert("Error: " + err.message);
+      alert("ERROR: " + err.message);
     }
   };
 
@@ -36,6 +38,8 @@ export default function App() {
     alert("Login clicked");
 
     try {
+      alert("Sending request...");
+
       const res = await fetch(API + "/login", {
         method: "POST",
         headers: {
@@ -55,7 +59,7 @@ export default function App() {
       }
 
     } catch (err) {
-      alert("Error: " + err.message);
+      alert("ERROR: " + err.message);
     }
   };
 
@@ -133,4 +137,4 @@ export default function App() {
       <button onClick={login}>Login</button>
     </div>
   );
-}
+      }
