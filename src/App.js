@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API = "https://zonguru-api.onrender.com"; // <-- မင်း backend link
+const API = "https://zonguru-jack-api.onrender.com"; // <-- မင်း backend link
 
 export default function App() {
   const [username, setUsername] = useState("");
