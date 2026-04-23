@@ -8,13 +8,11 @@ export default function App() {
   const [user, setUser] = useState("");
   const [balance, setBalance] = useState(0);
 
-  // REGISTER
+  // register
   const register = async () => {
     alert("Register clicked");
 
     try {
-      alert("Sending request...");
-
       const res = await fetch(API + "/register", {
         method: "POST",
         headers: {
@@ -26,20 +24,18 @@ export default function App() {
       alert("Request sent");
 
       const data = await res.json();
-      alert(data.message || JSON.stringify(data));
+      alert(JSON.stringify(data));
 
     } catch (err) {
-      alert("ERROR: " + err.message);
+      alert("Error: " + err.message);
     }
   };
 
-  // LOGIN
+  // login
   const login = async () => {
     alert("Login clicked");
 
     try {
-      alert("Sending request...");
-
       const res = await fetch(API + "/login", {
         method: "POST",
         headers: {
@@ -51,19 +47,19 @@ export default function App() {
       alert("Request sent");
 
       const data = await res.json();
-      alert(data.message || JSON.stringify(data));
+      alert(JSON.stringify(data));
 
       if (data.success) {
-        setUser(username);
-        setBalance(data.balance || 0);
+        setUser(data.user);
+        setBalance(data.balance);
       }
 
     } catch (err) {
-      alert("ERROR: " + err.message);
+      alert("Error: " + err.message);
     }
   };
 
-  // DEPOSIT
+  // deposit
   const deposit = async () => {
     const amount = prompt("Enter amount");
 
@@ -79,7 +75,7 @@ export default function App() {
     setBalance(data.balance);
   };
 
-  // WITHDRAW
+  // withdraw
   const withdraw = async () => {
     const amount = prompt("Enter amount");
 
@@ -100,7 +96,7 @@ export default function App() {
     }
   };
 
-  // AFTER LOGIN
+  // logged in screen
   if (user) {
     return (
       <div style={{ padding: 20 }}>
@@ -113,7 +109,7 @@ export default function App() {
     );
   }
 
-  // LOGIN SCREEN
+  // login screen
   return (
     <div style={{ padding: 20 }}>
       <h1>Zonguru Login</h1>
@@ -137,4 +133,4 @@ export default function App() {
       <button onClick={login}>Login</button>
     </div>
   );
-      }
+}
