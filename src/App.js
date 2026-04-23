@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API = "https://zonguru-jack-api.onrender.com"; // <-- မင်း backend link
+const API = "https://zonguru-jack-api.onrender.com";
 
 export default function App() {
   const [username, setUsername] = useState("");
@@ -10,53 +10,54 @@ export default function App() {
 
   // register
   const register = async () => {
-  alert("Register clicked");
+    alert("Register clicked");
 
-  try {
-    const res = await fetch(API + "/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password })
-    });
+    try {
+      const res = await fetch(API + "/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+      });
 
-    alert("Request sent");
+      alert("Request sent");
 
-    const data = await res.json();
-    alert(JSON.stringify(data));
+      const data = await res.json();
+      alert(JSON.stringify(data));
 
-  } catch (err) {
-    alert("Error: " + err.message);
-  }
-};
-
-    const data = await res.json();
-    alert(data.message);
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
   };
 
   // login
   const login = async () => {
-  alert("Login clicked");
+    alert("Login clicked");
 
-  try {
-    const res = await fetch(API + "/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password })
-    });
+    try {
+      const res = await fetch(API + "/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+      });
 
-    alert("Request sent");
+      alert("Request sent");
 
-    const data = await res.json();
-    alert(JSON.stringify(data));
+      const data = await res.json();
+      alert(JSON.stringify(data));
 
-  } catch (err) {
-    alert("Error: " + err.message);
-  }
-};
+      if (data.success) {
+        setUser(data.user);
+        setBalance(data.balance);
+      }
+
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
 
   // deposit
   const deposit = async () => {
@@ -132,4 +133,4 @@ export default function App() {
       <button onClick={login}>Login</button>
     </div>
   );
-}
+          }
