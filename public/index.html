@@ -1,9 +1,78 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Zonguru Dashboard</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <title>Zonguru Products</title>
+</head>
+
+<body style="font-family: Arial; background:#f5f5f5; padding:10px">
+
+  <h2>Products</h2>
+
+  <!-- 🔥 PRODUCTS GRID -->
+  <div id="products" style="
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:10px;
+  "></div>
+
+  <script>
+    async function loadProducts() {
+      const vip = 1; // 🔥 test VIP
+
+      const res = await fetch("https://zonguru-jack-api.onrender.com/products/" + vip);
+      const data = await res.json();
+
+      const container = document.getElementById("products");
+      container.innerHTML = "";
+
+      data.forEach(p => {
+        container.innerHTML += `
+          <div style="
+            background:#fff;
+            padding:10px;
+            border-radius:10px;
+            text-align:center;
+            box-shadow:0 2px 5px rgba(0,0,0,0.1);
+          ">
+            <img src="${p.image}" style="
+              width:100%;
+              height:120px;
+              object-fit:cover;
+              border-radius:8px;
+            "/>
+
+            <h4>${p.name}</h4>
+            <p>$${p.price}</p>
+
+            <button onclick="doTask('${p._id}')">
+              Submit
+            </button>
+          </div>
+        `;
+      });
+    }
+
+    async function doTask(productId) {
+      const username = "Test";
+
+      const res = await fetch("https://zonguru-jack-api.onrender.com/task", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username,
+          productId
+        })
+      });
+
+      const data = await res.json();
+
+      alert("Profit: $" + data.profit);
+    }
+
+    loadProducts();
+  </script>
+
+</body>
 </html>
