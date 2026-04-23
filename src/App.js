@@ -10,6 +10,9 @@ export default function App() {
 
   // register
   const register = async () => {
+  alert("Register clicked");
+
+  try {
     const res = await fetch(API + "/register", {
       method: "POST",
       headers: {
@@ -18,12 +21,25 @@ export default function App() {
       body: JSON.stringify({ username, password })
     });
 
+    alert("Request sent");
+
+    const data = await res.json();
+    alert(JSON.stringify(data));
+
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+};
+
     const data = await res.json();
     alert(data.message);
   };
 
   // login
   const login = async () => {
+  alert("Login clicked");
+
+  try {
     const res = await fetch(API + "/login", {
       method: "POST",
       headers: {
@@ -32,14 +48,15 @@ export default function App() {
       body: JSON.stringify({ username, password })
     });
 
-    const data = await res.json();
+    alert("Request sent");
 
-    if (data.success) {
-      setUser(username);
-    } else {
-      alert("Login Failed");
-    }
-  };
+    const data = await res.json();
+    alert(JSON.stringify(data));
+
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+};
 
   // deposit
   const deposit = async () => {
