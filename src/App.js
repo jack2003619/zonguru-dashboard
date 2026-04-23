@@ -8,7 +8,7 @@ export default function App() {
   const [user, setUser] = useState("");
   const [balance, setBalance] = useState(0);
 
-  // register
+  // REGISTER
   const register = async () => {
     alert("Register clicked");
 
@@ -24,14 +24,14 @@ export default function App() {
       alert("Request sent");
 
       const data = await res.json();
-      alert(JSON.stringify(data));
+      alert(data.message || JSON.stringify(data));
 
     } catch (err) {
       alert("Error: " + err.message);
     }
   };
 
-  // login
+  // LOGIN
   const login = async () => {
     alert("Login clicked");
 
@@ -47,11 +47,11 @@ export default function App() {
       alert("Request sent");
 
       const data = await res.json();
-      alert(JSON.stringify(data));
+      alert(data.message || JSON.stringify(data));
 
       if (data.success) {
-        setUser(data.user);
-        setBalance(data.balance);
+        setUser(username);
+        setBalance(data.balance || 0);
       }
 
     } catch (err) {
@@ -59,7 +59,7 @@ export default function App() {
     }
   };
 
-  // deposit
+  // DEPOSIT
   const deposit = async () => {
     const amount = prompt("Enter amount");
 
@@ -75,7 +75,7 @@ export default function App() {
     setBalance(data.balance);
   };
 
-  // withdraw
+  // WITHDRAW
   const withdraw = async () => {
     const amount = prompt("Enter amount");
 
@@ -96,7 +96,7 @@ export default function App() {
     }
   };
 
-  // logged in screen
+  // AFTER LOGIN
   if (user) {
     return (
       <div style={{ padding: 20 }}>
@@ -109,7 +109,7 @@ export default function App() {
     );
   }
 
-  // login screen
+  // LOGIN SCREEN
   return (
     <div style={{ padding: 20 }}>
       <h1>Zonguru Login</h1>
@@ -133,4 +133,4 @@ export default function App() {
       <button onClick={login}>Login</button>
     </div>
   );
-          }
+}
