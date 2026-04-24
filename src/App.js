@@ -3,13 +3,20 @@ import { useState, useEffect } from "react";
 const API = "https://zonguru-jack-api.onrender.com";
 
 export default function App() {
+  const [products, setProducts] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
-  const [products, setProducts] = useState([]);
 
-  // 🔥 REGISTER
+  // Load products
+  useEffect(() => {
+    fetch(API + "/products")
+      .then(res => res.json())
+      .then(data => setProducts(data));
+  }, []);
+
+  // Register
   const register = async () => {
     const res = await fetch(API + "/register", {
       method: "POST",
@@ -18,10 +25,10 @@ export default function App() {
     });
 
     const data = await res.json();
-    alert(data.message || data.error);
+    alert(data.message || "Registered");
   };
 
-  // 🔥 LOGIN
+  // Login
   const login = async () => {
     const res = await fetch(API + "/login", {
       method: "POST",
@@ -31,135 +38,82 @@ export default function App() {
 
     const data = await res.json();
 
-    if (data.error) {
-      alert(data.error);
+    if (data.user) {
+      setUser(data.user);
+      setBalance(data.user.balance);
+      alert("Login success");
     } else {
-      setUser(data);
-      setBalance(data.balance);
+      alert("Login failed");
     }
   };
 
-  // 🔥 GET PRODUCTS
-  const getProducts = async () => {
-    const res = await fetch(API + "/products");
-    const data = await res.json();
-    setProducts(data);
-  };
-
-  // 🔥 LOAD PRODUCTS AFTER LOGIN
-  useEffect(() => {
-    if (user) {
-      getProducts();
-    }
-  }, [user]);
-
-  // 🔥 ADD BALANCE
-  const addBalance = async () => {
-    const res = await fetch(API + "/add-balance", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: user._id,
-        amount: 100
-      })
-    });
-
-    const data = await res.json();
-
-    if (data.error) {
-      alert(data.error);
-    } else {
-      alert("Balance added");
-      setBalance(data.balance);
-    }
-  };
-
-  // 🔥 BUY PRODUCT
-  const buyProduct = async (id) => {
+  // Buy product
+  const buy = async (price) => {
     const res = await fetch(API + "/buy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        userId: user._id,
-        productId: id
+        username: user.username,
+        price
       })
     });
 
     const data = await res.json();
 
-    if (data.error) {
-      alert(data.error);
-    } else {
-      alert("Purchase success");
+    if (data.balance !== undefined) {
       setBalance(data.balance);
+      alert("Purchased!");
+    } else {
+      alert(data.message);
     }
   };
 
-  // 🔥 UI
-  if (!user) {
-    return (
-      <div style={{ padding: 20 }}>
-        <h2>Login / Register</h2>
-
-        <input
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <br /><br />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br /><br />
-
-        <button onClick={register}>Register</button>
-        <button onClick={login}>Login</button>
-      </div>
-    );
-  }
-
   return (
     <div style={{ padding: 20 }}>
-      <h2>Welcome {user.username}</h2>
+      <h2>Zonguru Shop</h2>
 
-      <h3>Balance: ${balance}</h3>
-      <button onClick={addBalance}>Add $100</button>
+      {/* Register / Login */}
+      {!user && (
+        <div>
+          <input
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <br />
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <br />
+          <button onClick={register}>Register</button>
+          <button onClick={login}>Login</button>
+        </div>
+      )}
 
-      <h2>Products</h2>
+      {/* User Info */}
+      {user && (
+        <div>
+          <h3>Welcome {user.username}</h3>
+          <p>Balance: ${balance}</p>
+        </div>
+      )}
 
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
+      {/* Products */}
+      <h3>Products</h3>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         {products.map((p) => (
-          <div
-            key={p._id}
-            style={{
-              border: "1px solid #ccc",
-              margin: 10,
-              padding: 10,
-              width: 200
-            }}
-          >
-            <img
-              src={p.image}
-              alt={p.name}
-              width="100%"
-              onError={(e) => {
-                e.target.src = "https://via.placeholder.com/200";
-              }}
-            />
-
+          <div key={p._id} style={{ border: "1px solid #ccc", padding: 10 }}>
+            <img src={p.image} width="100%" alt="" />
             <h4>{p.name}</h4>
             <p>${p.price}</p>
 
-            <button onClick={() => buyProduct(p._id)}>
-              Buy
-            </button>
+            {user && (
+              <button onClick={() => buy(p.price)}>Buy</button>
+            )}
           </div>
         ))}
       </div>
     </div>
   );
-            }
+              }
