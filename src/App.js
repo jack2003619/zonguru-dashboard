@@ -9,129 +9,157 @@ export default function App() {
   const [balance, setBalance] = useState(0);
   const [products, setProducts] = useState([]);
 
-  // ======================
-  // LOAD PRODUCTS
-  // ======================
-  const loadProducts = async () => {
-    try {
-      const res = await fetch(API + "/products");
-      const data = await res.json();
-      setProducts(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  // ======================
-  // REGISTER
-  // ======================
+  // 🔥 REGISTER
   const register = async () => {
-    try {
-      const res = await fetch(API + "/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password })
-      });
+    const res = await fetch(API + "/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
 
-      const data = await res.json();
-      alert("Registered!");
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
+    const data = await res.json();
+    alert(data.message || data.error);
   };
 
-  // ======================
-  // LOGIN
-  // ======================
+  // 🔥 LOGIN
   const login = async () => {
-    try {
-      const res = await fetch(API + "/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password })
-      });
+    const res = await fetch(API + "/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (data.error) {
-        alert("Login failed");
-      } else {
-        setUser(data);
-        setBalance(data.balance);
-        alert("Login success");
-      }
-    } catch (err) {
-      console.log(err);
+    if (data.error) {
+      alert(data.error);
+    } else {
+      setUser(data);
+      setBalance(data.balance);
     }
   };
 
-  // ======================
-  // UI
-  // ======================
+  // 🔥 GET PRODUCTS
+  const getProducts = async () => {
+    const res = await fetch(API + "/products");
+    const data = await res.json();
+    setProducts(data);
+  };
+
+  // 🔥 LOAD PRODUCTS AFTER LOGIN
+  useEffect(() => {
+    if (user) {
+      getProducts();
+    }
+  }, [user]);
+
+  // 🔥 ADD BALANCE
+  const addBalance = async () => {
+    const res = await fetch(API + "/add-balance", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user._id,
+        amount: 100
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      alert(data.error);
+    } else {
+      alert("Balance added");
+      setBalance(data.balance);
+    }
+  };
+
+  // 🔥 BUY PRODUCT
+  const buyProduct = async (id) => {
+    const res = await fetch(API + "/buy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user._id,
+        productId: id
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      alert(data.error);
+    } else {
+      alert("Purchase success");
+      setBalance(data.balance);
+    }
+  };
+
+  // 🔥 UI
+  if (!user) {
+    return (
+      <div style={{ padding: 20 }}>
+        <h2>Login / Register</h2>
+
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <br /><br />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <br /><br />
+
+        <button onClick={register}>Register</button>
+        <button onClick={login}>Login</button>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Zonguru Dashboard</h1>
+    <div style={{ padding: 20 }}>
+      <h2>Welcome {user.username}</h2>
 
-      {/* LOGIN / REGISTER */}
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-      />
-      <br /><br />
+      <h3>Balance: ${balance}</h3>
+      <button onClick={addBalance}>Add $100</button>
 
-      <input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-      <br /><br />
-
-      <button onClick={register}>Register</button>
-      <button onClick={login} style={{ marginLeft: "10px" }}>Login</button>
-
-      <hr />
-
-      {/* USER INFO */}
-      {user && (
-        <div>
-          <h2>Welcome {user.username}</h2>
-          <p>Balance: ${balance}</p>
-          <p>VIP Level: {user.vipLevel}</p>
-        </div>
-      )}
-
-      <hr />
-
-      {/* PRODUCTS */}
       <h2>Products</h2>
 
-      {products.map(p => (
-        <div
-          key={p._id}
-          style={{
-            border: "1px solid #ccc",
-            padding: "10px",
-            margin: "10px",
-            borderRadius: "10px"
-          }}
-        >
-          <img src={p.image} width="120" alt="" />
-          <h3>{p.name}</h3>
-          <p>Price: ${p.price}</p>
-          <p>VIP: {p.vipLevel}</p>
-        </div>
-      ))}
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {products.map((p) => (
+          <div
+            key={p._id}
+            style={{
+              border: "1px solid #ccc",
+              margin: 10,
+              padding: 10,
+              width: 200
+            }}
+          >
+            <img
+              src={p.image}
+              alt={p.name}
+              width="100%"
+              onError={(e) => {
+                e.target.src = "https://via.placeholder.com/200";
+              }}
+            />
+
+            <h4>{p.name}</h4>
+            <p>${p.price}</p>
+
+            <button onClick={() => buyProduct(p._id)}>
+              Buy
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
-          }
+            }
