@@ -9,14 +9,12 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
 
-  // Load products
   useEffect(() => {
     fetch(API + "/products")
       .then(res => res.json())
       .then(data => setProducts(data));
   }, []);
 
-  // Register
   const register = async () => {
     const res = await fetch(API + "/register", {
       method: "POST",
@@ -28,7 +26,6 @@ export default function App() {
     alert(data.message || "Registered");
   };
 
-  // Login
   const login = async () => {
     const res = await fetch(API + "/login", {
       method: "POST",
@@ -47,7 +44,11 @@ export default function App() {
     }
   };
 
-  // Buy product
+  const logout = () => {
+    setUser(null);
+    setBalance(0);
+  };
+
   const buy = async (price) => {
     const res = await fetch(API + "/buy", {
       method: "POST",
@@ -72,7 +73,7 @@ export default function App() {
     <div style={{ padding: 20 }}>
       <h2>Zonguru Shop</h2>
 
-      {/* Register / Login */}
+      {/* Login/Register */}
       {!user && (
         <div>
           <input
@@ -91,11 +92,12 @@ export default function App() {
         </div>
       )}
 
-      {/* User Info */}
+      {/* Logged In */}
       {user && (
         <div>
           <h3>Welcome {user.username}</h3>
           <p>Balance: ${balance}</p>
+          <button onClick={logout}>Logout</button>
         </div>
       )}
 
@@ -116,4 +118,4 @@ export default function App() {
       </div>
     </div>
   );
-              }
+}
