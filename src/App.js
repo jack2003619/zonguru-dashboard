@@ -28,7 +28,7 @@ export default function App() {
   const refreshUser = async () => {
     if (!user) return;
     try {
-      const res = await fetch(API + "/api/me");
+      const res = await fetch(API + "/api/me", { headers: { Authorization: "Bearer " + (localStorage.getItem("zonguru_token") || "") } });
       const data = await res.json();
       if (data.user) { setUser(data.user); setBalance(data.user.balance || 0); setCurrency(data.user.currency || "USDT"); }
       await loadPlatformSettings();
@@ -38,14 +38,14 @@ export default function App() {
   const changeCurrency = async (next) => {
     setCurrency(next);
     try {
-      const res = await fetch(API + "/api/me/profile", { method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({username:user.username,email:user.email,phone:user.phone,currency:next}) });
+      const res = await fetch(API + "/api/me/profile", { method:"PATCH", headers:{"Content-Type":"application/json",Authorization:"Bearer "+(localStorage.getItem("zonguru_token")||"")}, body:JSON.stringify({username:user.username,email:user.email,phone:user.phone,currency:next}) });
       const data = await res.json();
       if (data.user) setUser(data.user); else alert(data.message || "Currency update failed");
     } catch (_) { alert("Currency update failed"); }
   };
 
   const register = async () => {
-    const res = await fetch(API + "/register", {
+    const res = await fetch(API + "/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
@@ -56,7 +56,7 @@ export default function App() {
   };
 
   const login = async () => {
-    const res = await fetch(API + "/login", {
+    const res = await fetch(API + "/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
@@ -67,6 +67,7 @@ export default function App() {
     if (data.user) {
       setUser(data.user);
       setBalance(data.user.balance);
+      localStorage.setItem("zonguru_token", data.token || "");
       setCurrency(data.user.currency || "USDT");
       loadPlatformSettings();
       alert("Login success");
